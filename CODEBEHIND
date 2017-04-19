@@ -1,0 +1,125 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+using HPSR.HPSRNavWS;
+using System.Data;
+using Telerik.Web.UI;
+using System.Security.Cryptography;
+using System.Collections;
+using System.Net.Mail;
+using System.Net;
+using System.Text;
+using System.Web.UI.HtmlControls;
+using HPSR;
+
+namespace HPSR.Faculty
+{
+    public partial class Smileypage : System.Web.UI.Page
+    {
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            chks.Attributes.Add("onclick", "radioMe(event);");
+            if (!IsPostBack)
+            {
+
+
+
+
+            }
+        }
+
+        protected void btnSubmit_Click(object sender, EventArgs e)
+        {
+
+            try
+            {
+                if (Page.IsValid)
+                {
+                    if (chks.SelectedItem.Text != null)
+                    {
+                        FeedbackSmiley objsm = new FeedbackSmiley();
+                        FeedbackSmiley_Binding objfeed = (FeedbackSmiley_Binding)clsNAVWS.getNAVService(new FeedbackSmiley_Binding(), "FeedbackSmiley", "Page");
+                        string activationCode = Guid.NewGuid().ToString();
+                        objsm.Employee_ID = Session["Emp_No"].ToString();
+                        objsm.First_Name = Session["Name"].ToString();
+                        objsm.Sur_Name = txtLastName.Text.Trim();
+
+
+
+                        if (chks.SelectedItem.Text == "Excellent")
+                        {
+                            objsm.Feed_Back = Feed_Back._Excellent;
+
+                        }
+                        else if (chks.SelectedItem.Text == "VeryGood")
+                        {
+                            objsm.Feed_Back = Feed_Back.Very_Good;
+
+                        }
+
+                        else if (chks.SelectedItem.Text == "Good")
+                        {
+                            objsm.Feed_Back = Feed_Back.Good;
+
+                        }
+                        else if (chks.SelectedItem.Text == "NotGood")
+                        {
+                            objsm.Feed_Back = Feed_Back.Not_So_Good;
+
+                        }
+                        objsm.Feed_BackSpecified = true;
+
+                        objsm.Company = Session["UserCompany"].ToString().ToUpper();
+                        objfeed.Create(ref objsm);
+                        //GetUserID(txtEmail.Text.Trim());
+                        lblSave.Text = " Data  submitted ";
+                        // ScriptManager.RegisterStartupScript(this, this.GetType(), "alert", "<script> alert('your data saved sucessfully');window.open('LogOut.aspx');</script>", true);
+                        // this.Page.ClientScript.RegisterStartupScript(this.GetType(), "alert", "alert(' are you sure Logout ')", true);
+
+
+                        //if (MessageBox.Show("Are You Sure To Exit Programme ?", "Exit", MessageBoxButtons.OKCancel) == DialogResult.OK)
+                        //{
+                        // Application.Exit();
+                        //}
+                        //this.Page.ClientScript.RegisterStartupScript(this.GetType(), "alert", "alert(' are you sure jhjhjj ')", true);
+
+
+                        Response.Redirect("~/LogOut.aspx");
+
+                    }
+                    else
+                    {
+
+
+                    }
+
+
+                }
+            }
+
+
+
+            catch (Exception ex)
+            {
+                lblSave.Text = " Data not submitted " + ex.Message;
+
+            }
+        }
+
+        protected void btnLogout_Click(object sender, EventArgs e)
+        {
+            Response.Write("<script language='javascript'> { self.close() }</script>");
+            // Response.AddHeader("REFRESH", "005;URL=../Index.aspx");
+            Server.Transfer("Index.aspx", true);
+            Server.Transfer("~/Index.aspx");
+            Response.Redirect("~/LogOut.aspx");
+        }
+
+
+
+
+    }
+}
